@@ -17,7 +17,7 @@ JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
 JIRA_PROJECT_ID             = '' # ex. MEW
 JIRA_ADMIN_USERNAME         = ''
 JIRA_ADMIN_PASSWORD         = ''
-STORY_POINTS_FIELD_KEY      = '' # ex. customfield_15370
+STORY_POINTS_FIELD_KEY      = '' # ex. customfield_10280
 SPRINT_FIELD_KEY            = '' # ex. customfield_13760
 
 
