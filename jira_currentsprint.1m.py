@@ -12,13 +12,13 @@
 
 # CONFIG
 JIRA_URL                    = ''
-JIRA_REST_URL               = JIRA_URL+'rest/api/2'
+JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
 
-JIRA_PROJECT_ID             = ''
+JIRA_PROJECT_ID             = '' # ex. MEW
 JIRA_ADMIN_USERNAME         = ''
 JIRA_ADMIN_PASSWORD         = ''
-STORY_POINTS_FIELD_KEY      = ''
-SPRINT_FIELD_KEY            = ''
+STORY_POINTS_FIELD_KEY      = '' # ex. customfield_15370
+SPRINT_FIELD_KEY            = '' # ex. customfield_13760
 
 
 
@@ -101,12 +101,13 @@ def jira_search(jql_string):
     return r.json()
 
 
-def current_sprint_bitbar():
+def current_sprint_bitbar(mode='prod'):
     search_results = jira_search('project='+JIRA_PROJECT_ID+'+and+sprint+in+openSprints()+order+by+assignee&startAt=0&maxResults=200&fields=summary,project,assignee,issuetype,subtask,status,'+STORY_POINTS_FIELD_KEY+','+SPRINT_FIELD_KEY)
     issues = search_results['issues']
 
-    # print dict_to_json(search_results)
-    # exit()
+    if mode == 'test':
+        print dict_to_json(search_results)
+        exit()
 
     issue_count = 0
     point_count = 0
@@ -215,9 +216,14 @@ def current_sprint_bitbar():
 
 
 if __name__ == '__main__':
-    try:
-        current_sprint_bitbar()
-    except:
-        print 'Current Sprint (Unknown)'
-        print '---'
-        print 'Error loading sprint...'
+    import sys
+    if len(sys.argv) <= 1:
+        try:
+            current_sprint_bitbar()
+        except Exception as e:
+            print 'Current Sprint (Unknown)'
+            print '---'
+            print 'Error loading sprint...'
+    else:
+        if sys.argv[1] == 'test':
+            current_sprint_bitbar('test')
