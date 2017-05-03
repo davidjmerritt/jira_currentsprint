@@ -1,2 +1,2 @@
-# jira_currentsprint
-Bitbar plugin that loads current JIRA sprint details by project id
+# JIRA Current Sprint
+[Bitbar](https://github.com/matryer/bitbar) plugin that loads current JIRA sprint details by project id
