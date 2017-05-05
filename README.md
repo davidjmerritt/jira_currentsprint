@@ -3,19 +3,19 @@
 
 ## Installation (OS X)
 
-##### Install Python Package Index: [pip](https://pip.pypa.io/en/stable/installing/)
+#### Install Python Package Index: [pip](https://pip.pypa.io/en/stable/installing/)
 ```
 cd ~/Downloads
 curl -O https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 ```
 
-##### Install python package dependencies
+#### Install Python Package Dependencies
 ```
 pip install requests
 ```
 
-##### Create Plugin folder
+#### Create Plugin folder
 ```
 mkdir ~/Documents/BitBarPlugin
 ```
@@ -24,23 +24,23 @@ mkdir ~/Documents/BitBarPlugin
 - Double-click and open BitBar App
 - Choose: "~/Documents/BitBarPlugin" folder when prompted 
 
-##### Download [jira_currentsprint.1h.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py) file
+#### Download [jira_currentsprint.1h.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py) file
 ```
 cd ~/Documents/BitBarPlugin
 curl -O https://bootstrap.pypa.io/get-pip.py
 ```
 
-##### Move jira_currentsprint.py file into BitBarPlugin folder
+#### Move jira_currentsprint.py file into BitBarPlugin folder
 ```
 mv /Users/<username>/Documents/BitBarPlugin/jira_currentsprint.1h.py
 ```
 
-##### Modify permissions of file to make it executable
+#### Modify permissions of file to make it executable
 ```
 chmod +x jira_currentsprint.py file
 ```
 
-##### Modify the "# CONFIG" section of the jira_currentsprint.py file
+#### Modify the "# CONFIG" section of the jira_currentsprint.py file
 ```python
 # CONFIG
 JIRA_URL                    = 'http://myjiraurl.mysite.com'
