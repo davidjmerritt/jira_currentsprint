@@ -20,7 +20,7 @@ pip install requests
 mkdir ~/Documents/BitBarPlugin
 ```
 
-##### [Download](https://github.com/matryer/bitbar/releases/tag/v1.9.2) and Install BitBar App
+#### [Download](https://github.com/matryer/bitbar/releases/tag/v1.9.2) and Install BitBar App
 - Double-click and open BitBar App
 - Choose: "~/Documents/BitBarPlugin" folder when prompted 
 
