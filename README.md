@@ -41,6 +41,20 @@ chmod +x jira_currentsprint.py file
 ```
 
 ##### Modify the "# CONFIG" section of the jira_currentsprint.py file
-```
+```python
+# CONFIG
+JIRA_URL                    = 'http://myjiraurl.mysite.com'
+JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
 
+JIRA_PROJECT_ID             = 'PJID' # ex. MEW
+JIRA_ADMIN_USERNAME         = 'myusername'
+JIRA_ADMIN_PASSWORD         = 'mypassword'
+STORY_POINTS_FIELD_KEY      = 'customfield_9893' # ex. customfield_10280
+SPRINT_FIELD_KEY            = 'customfield_12455' # ex. customfield_13760
 ```
+## Testing
+```
+cd ~/Documents/BitBarPlugin
+python jira_currentsprint.1h.py test
+```
+This will return a pretty-printed json payload or an error message if the configuration is incorrect.
