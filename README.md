@@ -1,6 +1,7 @@
 # JIRA Current Sprint
 [Bitbar](https://github.com/matryer/bitbar) plugin that loads current JIRA sprint details by project id
 
+## Installation (OS X)
 
 ##### Install Python Package Index: [pip](https://pip.pypa.io/en/stable/installing/)
 ```
@@ -19,7 +20,6 @@ pip install requests
 mkdir ~/Documents/BitBarPlugin
 ```
 
-## Installation (OS X)
 ##### [Download](https://github.com/matryer/bitbar/releases/tag/v1.9.2) and Install BitBar App
 - Double-click and open BitBar App
 - Choose: "~/Documents/BitBarPlugin" folder when prompted 
