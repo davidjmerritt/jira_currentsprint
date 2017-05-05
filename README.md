@@ -10,8 +10,11 @@ mkdir /Users/<username>/Documents/BitBarPlugin
 ```
 
 
-##### Download [jira_currentsprint.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1m.py) file
+##### Download [jira_currentsprint.1h.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py) file
 ##### Move jira_currentsprint.py file into BitBarPlugin folder
+```
+mv /Users/<username>/Documents/BitBarPlugin/jira_currentsprint.1h.py
+```
 ##### Modify permissions of file to make it executable
 ```
 chmod +x jira_currentsprint.py file
