@@ -32,7 +32,7 @@ curl -O https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/maste
 
 #### Modify permissions of file to make it executable
 ```
-chmod +x jira_currentsprint.py file
+chmod +x jira_currentsprint.1h.py
 ```
 
 #### Modify the "# CONFIG" section of the jira_currentsprint.py file
