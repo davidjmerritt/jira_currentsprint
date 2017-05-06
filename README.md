@@ -7,12 +7,12 @@
 ```
 cd ~/Downloads
 curl -O https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
+sudo python get-pip.py
 ```
 
 #### Install Python Package Dependencies
 ```
-pip install requests
+sudo pip install requests
 ```
 
 #### Create Plugin folder
