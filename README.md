@@ -47,6 +47,10 @@ JIRA_ADMIN_PASSWORD         = 'mypassword'
 STORY_POINTS_FIELD_KEY      = 'customfield_9893' # ex. customfield_10280
 SPRINT_FIELD_KEY            = 'customfield_12455' # ex. customfield_13760
 ```
+
+#### Refresh BitBar 
+Click on BitBar menu bar scroll to Preferences and selcted "Refresh all"
+
 ## Testing
 ```
 cd ~/Documents/BitBarPlugin
