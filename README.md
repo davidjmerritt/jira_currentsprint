@@ -27,7 +27,7 @@ mkdir ~/Documents/BitBarPlugin
 #### Download [jira_currentsprint.1h.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py) file
 ```
 cd ~/Documents/BitBarPlugin
-curl -O https://bootstrap.pypa.io/get-pip.py
+curl -O https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py
 ```
 
 #### Move jira_currentsprint.py file into BitBarPlugin folder
