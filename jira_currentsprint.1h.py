@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 # <bitbar.title>JIRA Current Sprint</bitbar.title>
-# <bitbar.version>v0.0.1</bitbar.version>
+# <bitbar.version>v0.0.2</bitbar.version>
 # <bitbar.author>David J Merritt</bitbar.author>
 # <bitbar.author.github>davidjmerritt</bitbar.author.github>
 # <bitbar.desc>Loads current sprint details from JIRA project id.</bitbar.desc>
@@ -11,7 +11,7 @@
 # <bitbar.abouturl></bitbar.abouturl>
 
 # CONFIG
-JIRA_URL                    = ''
+JIRA_URL                    = '' # jira.mydomain.com
 JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
 
 JIRA_PROJECT_ID             = '' # ex. MEW
@@ -20,12 +20,22 @@ JIRA_ADMIN_PASSWORD         = ''
 STORY_POINTS_FIELD_KEY      = '' # ex. customfield_10280
 SPRINT_FIELD_KEY            = '' # ex. customfield_13760
 
+JIRA_ICON_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ0NTVGRUEyQjQ0MTFFN0JCRkNBOURGNEFERjU0REEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ0NTVGRUIyQjQ0MTFFN0JCRkNBOURGNEFERjU0REEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDQ1NUZFODJCNDQxMUU3QkJGQ0E5REY0QURGNTREQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDQ1NUZFOTJCNDQxMUU3QkJGQ0E5REY0QURGNTREQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu4ccU0AAAFkSURBVHjaYvj//z8DCOMBWkDcDsRSuBTAzcBimAgQ5yFp3glSD8RToHwdIM4GYk5iDJsD1bwayi+F8gOg/ItQfhm6YUxYXH0RSt+C0t1AzAjEG6D8S1D6BrpGRpirGBkZ5aCaHjIQD5ShLruL6l8Ghnyo83cBsSNUMTcQywAxF5RmhYqHAPFJqPpp2MLMDCoJw3xAzAHEv6H8R1CDTJDUfAbiaFwRsBNJ4Vao2CQoPwPKv4KkZiYQM+MyzBLNde1QcTcovQRJ7gcQKxBKGnVoBpZAxSeiiccTk85AYBFauJwB4n9IYq3E5gAY2IzmEhieTEp2Qgbr0QxaT2rehAE2KL0DybAX2DI8MYZ9gwY6CFxGMnAnqYZlImkGpXYeNO+6YTOMCUdYRSKxNYD4CxBPQBKLwl+wIYA41Iv/oclBHipui+SyB9jMYMFi/k8gng7E0tDiBlaKgNJaJxArQrMUBgAIMAAoPyG09TgH1QAAAABJRU5ErkJggg=='
 
 
 
 import os, datetime, calendar, time, json
 from dateutil import rrule
 import requests
+
+
+def progress_bar(per,top=100,empty=" ",fill=u"\u2588",scale=4):
+        barlist = []
+        for i in range(0,per/scale):
+            barlist.append(fill)
+        for i in range(per/scale,top/scale):
+            barlist.append(empty)
+        return barlist
 
 
 def print_column_from_list(input_list,padding=4):
@@ -111,16 +121,19 @@ def current_sprint_bitbar(mode='prod'):
 
     issue_count = 0
     point_count = 0
+    complete_point_count = 0
 
     for issue in issues:
+        sprint_id = find_between(issue['fields'][SPRINT_FIELD_KEY][0],'id=',',rapidViewId=')
         sprint_title = find_between(issue['fields'][SPRINT_FIELD_KEY][0],'name=',',startDate=')
         sprint_start = jira_stamp_short_to_epoch(find_between(find_between(issue['fields'][SPRINT_FIELD_KEY][0],'startDate=',',endDate='),'','T'))
         sprint_end = jira_stamp_short_to_epoch(find_between(find_between(issue['fields'][SPRINT_FIELD_KEY][0],'endDate=',',completeDate='),'','T'))
         if type(issue['fields'][STORY_POINTS_FIELD_KEY]) is float:
             point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
+            if issue['fields']['status']['name'] == 'Complete':
+                complete_point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
         if issue['fields']['issuetype']['subtask'] == False:
             issue_count += 1
-
     users = []
     for issue in issues:
         if issue['fields']['assignee'] == None:
@@ -128,8 +141,8 @@ def current_sprint_bitbar(mode='prod'):
         else:
             user = issue['fields']['assignee']['displayName']
             _id = issue['fields']['assignee']['name']
-        if {'_id':_id,'name':user,'issues':[],'issue_count':0,'point_count':0.0} not in users:
-            users.append({'_id':_id,'name':user,'issues':[],'issue_count':0,'point_count':0.0})
+        if {'_id':_id,'name':user,'issues':[],'issue_count':0,'point_count':0.0,'complete_points':0.0,'complete_issues':0} not in users:
+            users.append({'_id':_id,'name':user,'issues':[],'issue_count':0,'point_count':0.0,'complete_points':0.0,'complete_issues':0})
 
     for user in users:
         user['statusTypes'] = []
@@ -160,6 +173,9 @@ def current_sprint_bitbar(mode='prod'):
                 user['statusTypes'].append(status)
                 if type(issue['fields'][STORY_POINTS_FIELD_KEY]) is float:
                     user['point_count'] += points
+                    if status == 'Complete':
+                        user['complete_points'] += points
+                        user['complete_issues'] += 1
                 if subtask: #and search_name != '_Unassigned':
                     user['issues'].append({
                         'text':'--'+' [ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
@@ -172,9 +188,10 @@ def current_sprint_bitbar(mode='prod'):
                         'status':status
                     })
 
-    print 'Current Sprint ('+project_name+')'
+    print '|color=black templateImage='+JIRA_ICON_BASE64
+    # print 'Current Sprint ('+project_name+')'
     print '---'
-    print '['+JIRA_PROJECT_ID+'] '+sprint_title+'|color=black href='+JIRA_URL
+    print project_name+' ('+JIRA_PROJECT_ID+') // '+sprint_title+'|color=black href='+JIRA_URL+'/secure/RapidBoard.jspa?projectKey='+JIRA_PROJECT_ID+'&view=planning.nodetail&epics=visible'
 
     # days_left_in_sprint = round((((sprint_end)-(time.time()))/3600)/24,2)
     days_total_in_sprint = business_days(sprint_start,sprint_end)
@@ -192,28 +209,29 @@ def current_sprint_bitbar(mode='prod'):
     # print dict_to_json(sorted_users)
     # exit()
 
-    print 'Name\t\t\tIssues\t\tPoints|size=11'
-    max_len_name = 11
+    # print 'Completed Issues|color=black'
+    print 'Name\t\t\t\t\tIssues\t\t\tPoints|size=11'
+    max_len_name = 18
     for user in sorted_users:
         # user['name'] = user['name'].split(' ')[0]
         if len(user['name']) < max_len_name:
             diff = max_len_name - len(user['name'])
             spaces = '                              '
             user['name'] = user['name']+spaces[:diff]
-            tabs = '\t\t'
+            tabs = '\t\t\t'
         else:
             user['name'] = user['name'][:max_len_name]+'..'
-            tabs = '\t\t'
+            tabs = '\t\t\t'
         if 'Blocked' in user['statusTypes']:
-            print user['name']+tabs+str(user['issue_count'])+'\t\t\t'+str(user['point_count'])+'|size=12 color=red'
+            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12 color=red'
         else:
-            print user['name']+tabs+str(user['issue_count'])+'\t\t\t'+str(user['point_count'])+'|size=12'
+            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12'
         issues = user['issues'] #sort_dict_list(user['issues'],key_name='status')
         for issue in issues:
             print '--'+issue['text']
     print '---'
-    print 'Total\t\t\t'+str(issue_count)+'\t\t\t'+str(point_count)+'|size=14'
-
+    print 'Total\t\t\t\t\t'+str(issue_count)+'\t\t\t\t'+str(complete_point_count)+'/'+str(point_count)+'|size=14'
+    print '[ '+''.join(progress_bar(int((complete_point_count/point_count)*100),top=100,empty=" ",fill='l',scale=1))+'l '+str(int((complete_point_count/point_count)*100))+'% Complete ]'+'|size=10 href='+JIRA_URL+'/secure/RapidBoard.jspa?projectKey='+JIRA_PROJECT_ID+'&view=reporting&chart=burndownChart&sprint='+sprint_id
 
 if __name__ == '__main__':
     import sys
