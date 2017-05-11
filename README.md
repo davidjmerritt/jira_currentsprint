@@ -1,5 +1,7 @@
 # JIRA Current Sprint
 [Bitbar](https://github.com/matryer/bitbar) plugin that loads current JIRA sprint details by project id
+<br><br>
+![Screen Capture](https://github.com/davidjmerritt/jira_currentsprint/blob/512db8f3c119958e8025bfb98e2419e1a24b95e7/jira_currentsprint_graphic.jpg?raw=true)
 
 ## Installation (OS X)
 
