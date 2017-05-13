@@ -6,27 +6,99 @@
 # <bitbar.author>David J Merritt</bitbar.author>
 # <bitbar.author.github>davidjmerritt</bitbar.author.github>
 # <bitbar.desc>Loads current sprint details from JIRA project id.</bitbar.desc>
-# <bitbar.dependencies>python</bitbar.dependencies>
-
+# <bitbar.dependencies>python, requests, pyyaml</bitbar.dependencies>
 # <bitbar.abouturl></bitbar.abouturl>
 
-# CONFIG
-JIRA_URL                    = '' # jira.mydomain.com
-JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
 
-JIRA_PROJECT_ID             = '' # ex. MEW
-JIRA_ADMIN_USERNAME         = ''
-JIRA_ADMIN_PASSWORD         = ''
-STORY_POINTS_FIELD_KEY      = '' # ex. customfield_10280
-SPRINT_FIELD_KEY            = '' # ex. customfield_13760
+import os, datetime, calendar, time, json, subprocess
+from dateutil import rrule
+import requests, yaml
+
+
+APP_FILE                    = os.path.abspath(__file__)
+APP_PATH                    = os.path.dirname(APP_FILE)+'/'
+DATA_PATH                   = APP_PATH+'jira_currentsprint_config/'
+CONFIG_FILE                 = DATA_PATH+'jira_currentsprint.yaml'
+DEFAULT_CONFIG              = { "JIRA_URL": "", "JIRA_REST_URL": "/rest/api/2", "JIRA_PROJECT_ID": "", "JIRA_ADMIN_USERNAME": "", "JIRA_ADMIN_PASSWORD": "", "STORY_POINTS_FIELD_KEY": "customfield_10280", "SPRINT_FIELD_KEY": "customfield_13760" }
+
+
+def yaml_to_dict(yaml_input):
+    if os.path.exists(yaml_input):
+        with open(yaml_input) as yaml_string:
+            yaml_data = yaml.safe_load(yaml_string)
+    else:
+        yaml_data = False
+    return yaml_data
+
+
+def dict_to_yaml(dict_data,return_type='pretty'):
+    if return_type == 'pretty':
+        return yaml.dump(dict_data, width=50, indent=4, default_flow_style=False)
+    elif return_type == 'raw':
+        return yaml.dump(dict_data)
+
+
+def config(key=None):
+    config_data = yaml_to_dict(CONFIG_FILE)
+    if key == None:
+        results = config_data
+    else:
+        try:
+            results = config_data[key]
+        except KeyError:
+            results = False
+    return results
+
+
+def write_config():
+    if os.path.isdir(DATA_PATH):
+        yaml_string = dict_to_yaml(DEFAULT_CONFIG)
+        results = file_write(CONFIG_FILE,yaml_string,kind="overwrite")
+    else:
+        results = False
+    return results
+
+
+def file_write(file_path,contents,kind='append'):
+    if kind == 'append':
+        kind = 'a'
+    elif kind == 'overwrite':
+        kind = 'w'
+    with open(file_path, kind) as f:
+        read_data = f.write(contents+"\n")
+    return os.path.isfile(file_path)
+
+
+def which(bin_name):
+    binary = run_command('which '+bin_name)
+    if binary == '':
+        binary = False
+    return binary
+
+
+if os.path.isdir(DATA_PATH) == False:
+    os.mkdir(DATA_PATH)
+
+if os.path.isfile(CONFIG_FILE) == False:
+    write_config()
+
+
+JIRA_URL                    = config('JIRA_URL')
+JIRA_REST_URL               = JIRA_URL+config('JIRA_REST_URL')
+JIRA_PROJECT_ID             = config('JIRA_PROJECT_ID')
+JIRA_ADMIN_USERNAME         = config('JIRA_ADMIN_USERNAME')
+JIRA_ADMIN_PASSWORD         = config('JIRA_ADMIN_PASSWORD')
+STORY_POINTS_FIELD_KEY      = config('STORY_POINTS_FIELD_KEY')
+SPRINT_FIELD_KEY            = config('SPRINT_FIELD_KEY')
+
 
 JIRA_ICON_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ0NTVGRUEyQjQ0MTFFN0JCRkNBOURGNEFERjU0REEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ0NTVGRUIyQjQ0MTFFN0JCRkNBOURGNEFERjU0REEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDQ1NUZFODJCNDQxMUU3QkJGQ0E5REY0QURGNTREQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDQ1NUZFOTJCNDQxMUU3QkJGQ0E5REY0QURGNTREQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu4ccU0AAAFkSURBVHjaYvj//z8DCOMBWkDcDsRSuBTAzcBimAgQ5yFp3glSD8RToHwdIM4GYk5iDJsD1bwayi+F8gOg/ItQfhm6YUxYXH0RSt+C0t1AzAjEG6D8S1D6BrpGRpirGBkZ5aCaHjIQD5ShLruL6l8Ghnyo83cBsSNUMTcQywAxF5RmhYqHAPFJqPpp2MLMDCoJw3xAzAHEv6H8R1CDTJDUfAbiaFwRsBNJ4Vao2CQoPwPKv4KkZiYQM+MyzBLNde1QcTcovQRJ7gcQKxBKGnVoBpZAxSeiiccTk85AYBFauJwB4n9IYq3E5gAY2IzmEhieTEp2Qgbr0QxaT2rehAE2KL0DybAX2DI8MYZ9gwY6CFxGMnAnqYZlImkGpXYeNO+6YTOMCUdYRSKxNYD4CxBPQBKLwl+wIYA41Iv/oclBHipui+SyB9jMYMFi/k8gng7E0tDiBlaKgNJaJxArQrMUBgAIMAAoPyG09TgH1QAAAABJRU5ErkJggg=='
 
 
-
-import os, datetime, calendar, time, json
-from dateutil import rrule
-import requests
+def run_command(command):
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = p.communicate()[0]
+    return output[:-1]
 
 
 def progress_bar(per,top=100,empty=" ",fill=u"\u2588",scale=4):
@@ -176,17 +248,24 @@ def current_sprint_bitbar(mode='prod'):
                     if status == 'Complete':
                         user['complete_points'] += points
                         user['complete_issues'] += 1
-                if subtask: #and search_name != '_Unassigned':
-                    user['issues'].append({
-                        'text':'--'+' [ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
-                        'status':status
-                    })
+                # if subtask: #and search_name != '_Unassigned':
+                #     user['issues'].append({
+                #         'text':'--'+' [ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
+                #         'status':status
+                #     })
+                # else:
+                if subtask:
+                    task_type = 'subtask'
                 else:
-                    user['issue_count'] += 1
-                    user['issues'].append({
-                        'text':'[ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
-                        'status':status
-                    })
+                    task_type = 'maintask'
+                user['issue_count'] += 1
+                user['issues'].append({
+                    'text':'[ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
+                    'status':status,
+                    'point_count': points,
+                    'issue_number': issue_number,
+                    'task_type': task_type
+                })
 
     print '|color=black templateImage='+JIRA_ICON_BASE64
     # print 'Current Sprint ('+project_name+')'
@@ -226,12 +305,21 @@ def current_sprint_bitbar(mode='prod'):
             print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12 color=red'
         else:
             print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12'
-        issues = user['issues'] #sort_dict_list(user['issues'],key_name='status')
+
+        issues = sort_dict_list(user['issues'],key_name='task_type') #issues = user['issues']
+        issues = sort_dict_list(user['issues'],key_name='status')
+        issues = sort_dict_list(user['issues'],key_name='point_count') #issues = user['issues']
+        issues.reverse()
+
         for issue in issues:
             print '--'+issue['text']
     print '---'
     print 'Total\t\t\t\t\t'+str(issue_count)+'\t\t\t\t'+str(complete_point_count)+'/'+str(point_count)+'|size=14'
     print '[ '+''.join(progress_bar(int((complete_point_count/point_count)*100),top=100,empty=" ",fill='l',scale=1))+'l '+str(int((complete_point_count/point_count)*100))+'% Complete ]'+'|size=10 href='+JIRA_URL+'/secure/RapidBoard.jspa?projectKey='+JIRA_PROJECT_ID+'&view=reporting&chart=burndownChart&sprint='+sprint_id
+    print '---'
+    print 'Refresh|refresh=true'
+    print '---'
+    print 'Configure|bash='+which('python')+' param1='+APP_FILE+' param2=config terminal=false'
 
 if __name__ == '__main__':
     import sys
@@ -239,9 +327,13 @@ if __name__ == '__main__':
         try:
             current_sprint_bitbar()
         except Exception as e:
-            print 'Current Sprint (Unknown)'
+            print '|color=red templateImage='+JIRA_ICON_BASE64
             print '---'
-            print 'Error loading sprint...'
+            print 'Refresh|refresh=true'
+            print '---'
+            print 'Configure|bash='+which('python')+' param1='+APP_FILE+' param2=config terminal=false'
     else:
         if sys.argv[1] == 'test':
             current_sprint_bitbar('test')
+        elif sys.argv[1] == 'config':
+            run_command('open '+CONFIG_FILE)
