@@ -44,8 +44,9 @@ chmod +x jira_currentsprint.1h.py
 
 
 ## Testing
+This will return a pretty-printed json payload or an error message if the configuration is incorrect.
 ```
 cd ~/Documents/BitBarPlugin
 python jira_currentsprint.1h.py test
 ```
-This will return a pretty-printed json payload or an error message if the configuration is incorrect.
+
