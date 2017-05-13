@@ -38,7 +38,7 @@ chmod +x jira_currentsprint.1h.py
 ```
 
 #### Configure JIRA
-1. Click on "BitBar" in the menu bar and select: "Refresh All". The icon should change into the JIRA icon. 
+1. Click on "BitBar" in the menu bar and select: "Refresh all". The icon should change into the JIRA icon. 
 2. Click the JIRA icon in the menu bar and select select: "Configure". The file "jira_currentsprint.yaml" file should launch in your default text editor. Fill in the missing data points, save and close the file.
 3. Click to the JIRA icon in the menu bar and select "Refresh".  Click the JIRA icon again. You should now see the current sprint data loaded.
 
