@@ -22,7 +22,7 @@ sudo pip install requests
 mkdir ~/Documents/BitBarPlugin
 ```
 
-#### [Download](https://github.com/matryer/bitbar/releases/tag/v1.9.2) and Install BitBar App
+#### Download and Install [BitBar](https://github.com/matryer/bitbar/releases/tag/v1.9.2)
 - Double-click and open BitBar App
 - Choose: "~/Documents/BitBarPlugin" folder when prompted 
 
@@ -37,21 +37,9 @@ curl -O https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/maste
 chmod +x jira_currentsprint.1h.py
 ```
 
-#### Modify the "# CONFIG" section of the jira_currentsprint.py file
-```python
-# CONFIG
-JIRA_URL                    = 'http://myjiraurl.mysite.com'
-JIRA_REST_URL               = JIRA_URL+'/rest/api/2'
+#### Configure JIRA
+Click on the JIRA icon in your memnu bar and select "Configure". Fill in the missing data points.  Save the file. Click to the JIRA icon in the menu bar and select "Refresh".  You should now see Current Sprint data loaded when you Click the JIRA icon.
 
-JIRA_PROJECT_ID             = 'PJID' # ex. MEW
-JIRA_ADMIN_USERNAME         = 'myusername'
-JIRA_ADMIN_PASSWORD         = 'mypassword'
-STORY_POINTS_FIELD_KEY      = 'customfield_9893' # ex. customfield_10280
-SPRINT_FIELD_KEY            = 'customfield_12455' # ex. customfield_13760
-```
-
-#### Refresh BitBar 
-Click on BitBar menu bar scroll to Preferences and selcted "Refresh all"
 
 ## Testing
 ```
