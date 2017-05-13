@@ -14,7 +14,7 @@ sudo python get-pip.py
 
 #### Install Python Package Dependencies
 ```
-sudo pip install requests
+sudo pip install requests pyyaml
 ```
 
 #### Create Plugin folder
