@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 # <bitbar.title>JIRA Current Sprint</bitbar.title>
-# <bitbar.version>v0.0.2</bitbar.version>
+# <bitbar.version>v0.0.3</bitbar.version>
 # <bitbar.author>David J Merritt</bitbar.author>
 # <bitbar.author.github>davidjmerritt</bitbar.author.github>
 # <bitbar.desc>Loads current sprint details from JIRA project id.</bitbar.desc>
