@@ -26,7 +26,7 @@ mkdir ~/Documents/BitBarPlugin
 - Double-click and open BitBar App
 - Choose: "~/Documents/BitBarPlugin" folder when prompted 
 
-#### Download [jira_currentsprint.1h.py](https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py) file to the BitBarPlugin folder
+#### Download [Latest Release](https://github.com/davidjmerritt/jira_currentsprint/releases/latest)
 ```
 cd ~/Documents/BitBarPlugin
 curl -O https://raw.githubusercontent.com/davidjmerritt/jira_currentsprint/master/jira_currentsprint.1h.py
