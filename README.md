@@ -23,8 +23,8 @@ mkdir ~/Documents/BitBarPlugin
 ```
 
 #### Download and Install [BitBar](https://github.com/matryer/bitbar/releases/tag/v1.9.2)
-- Double-click and open BitBar App
-- Choose: "~/Documents/BitBarPlugin" folder when prompted 
+1. Double-click and open BitBar App
+2. Choose: "~/Documents/BitBarPlugin" folder when prompted 
 
 #### Download JIRA Current Sprint Plugin
 ```
