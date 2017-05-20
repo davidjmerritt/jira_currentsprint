@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 # <bitbar.title>JIRA Current Sprint</bitbar.title>
-# <bitbar.version>v0.0.3</bitbar.version>
+# <bitbar.version>v0.0.4</bitbar.version>
 # <bitbar.author>David J Merritt</bitbar.author>
 # <bitbar.author.github>davidjmerritt</bitbar.author.github>
 # <bitbar.desc>Loads current sprint details from JIRA project id.</bitbar.desc>
@@ -201,11 +201,10 @@ def current_sprint_bitbar(mode='prod'):
         sprint_start = jira_stamp_short_to_epoch(find_between(find_between(issue['fields'][SPRINT_FIELD_KEY][0],'startDate=',',endDate='),'','T'))
         sprint_end = jira_stamp_short_to_epoch(find_between(find_between(issue['fields'][SPRINT_FIELD_KEY][0],'endDate=',',completeDate='),'','T'))
         if type(issue['fields'][STORY_POINTS_FIELD_KEY]) is float:
-            point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
-            if issue['fields']['status']['name'] == 'Complete':
-                complete_point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
-        if issue['fields']['issuetype']['subtask'] == False:
-            issue_count += 1
+            if issue['fields']['issuetype']['subtask'] == False:
+                point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
+                if issue['fields']['status']['name'] == 'Complete':
+                    complete_point_count += issue['fields'][STORY_POINTS_FIELD_KEY]
     users = []
     for issue in issues:
         if issue['fields']['assignee'] == None:
@@ -258,7 +257,8 @@ def current_sprint_bitbar(mode='prod'):
                     task_type = 'subtask'
                 else:
                     task_type = 'maintask'
-                user['issue_count'] += 1
+                    issue_count += 1
+                    user['issue_count'] += 1
                 user['issues'].append({
                     'text':'[ '+status+' ] '+issue_number+' - '+summary+' ('+str(points)+')'+'|size=12 href='+JIRA_URL+'/browse/'+key+'-'+issue_number+' color='+statusColor,
                     'status':status,
@@ -302,9 +302,9 @@ def current_sprint_bitbar(mode='prod'):
             user['name'] = user['name'][:max_len_name]+'..'
             tabs = '\t\t\t'
         if 'Blocked' in user['statusTypes']:
-            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12 color=red'
+            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(int(user['complete_points']))+'/'+str(int(user['point_count']))+'|size=12 color=red'
         else:
-            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(user['complete_points'])+'/'+str(user['point_count'])+'|size=12'
+            print user['name']+tabs+str(user['complete_issues'])+'/'+str(user['issue_count'])+'\t\t\t\t'+str(int(user['complete_points']))+'/'+str(int(user['point_count']))+'|size=12'
 
         issues = sort_dict_list(user['issues'],key_name='task_type') #issues = user['issues']
         issues = sort_dict_list(user['issues'],key_name='status')
@@ -314,7 +314,7 @@ def current_sprint_bitbar(mode='prod'):
         for issue in issues:
             print '--'+issue['text']
     print '---'
-    print 'Total\t\t\t\t\t'+str(issue_count)+'\t\t\t\t'+str(complete_point_count)+'/'+str(point_count)+'|size=14'
+    print 'Total\t\t\t\t\t'+str(issue_count)+'\t\t\t\t'+str(int(complete_point_count))+'/'+str(int(point_count))+'|size=14'
     print '[ '+''.join(progress_bar(int((complete_point_count/point_count)*100),top=100,empty=" ",fill='l',scale=1))+'l '+str(int((complete_point_count/point_count)*100))+'% Complete ]'+'|size=10 href='+JIRA_URL+'/secure/RapidBoard.jspa?projectKey='+JIRA_PROJECT_ID+'&view=reporting&chart=burndownChart&sprint='+sprint_id
     print '---'
     print 'Refresh|refresh=true'
